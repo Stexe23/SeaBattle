@@ -37,6 +37,7 @@ class Board:  # Класс поля
         self.busy = [] # Хранение занятых точек
         self.hid = hid
         self.fild = [["0"] * pole for _ in range(pole)]
+        self.count = 0
 
     def __str__(self): # Метод формирования поля
         raz = ""
@@ -60,12 +61,12 @@ class Board:  # Класс поля
         self.ships.append(ship)
         self.contour(ship)
 
-    def contour(self, ship_cont, tor =False): # Метод обвода контура корабля
+    def contour(self, ship, tor = False): # Метод обвода контура корабля
         cont = [(-1, -1), (-1, 0), (-1, 1), # Координаты контура
                 ( 0, -1), ( 0, 0), ( 0, 1),
                 ( 1, -1), ( 1, 0), ( 1, 1)]
 
-        for d in ship_cont.dots: # Определяем точки коробля
+        for d in ship.dots: # Определяем точки коробля
             for dx, dy in cont: # Провереем координаты вонтура для точки коробля
                 cor = Dot(d.x + dx, d.y + dy) # Смещаем коордитаты точки коробля
                 if not(self.out(cor) and cor not in self.busy): # Точка не выходит за грацъницы поля и не занята
@@ -73,8 +74,32 @@ class Board:  # Класс поля
                         self.fild[cor.x][cor.y] = "."
                     self.busy.append(cor)
 
+    def shot(self, d):
+        if self.out(d): # Выстрел не выходит за пределы поля
+            raise BoardOutException()
 
+        if self.busy: # Проверки клетки на потор
+            raise  BoardUsedException()
 
+        for ship in self.ships: # Для корабля из списка кораблей
+            if d in ship.dots:
+                ship.live -= 1
+                self.fild[d.x][d.y] = "x"
+                if ship.live == 0:
+                    self.count += 1
+                    self.contour(ship, tor = True)
+                    print('Корабль утонул!')
+                    return False
+                else:
+                    print('Корабль ранен')
+                    return True
+
+        self.fild[d.x][d.y] = 'T' # Описание промаха
+        print("Мимо!")
+        return False
+
+    def begin(self): # Очистка точек поля
+        self.busy = []
 
 
 class Ship:  # Родительский класс кораблей
@@ -97,6 +122,7 @@ class Ship:  # Родительский класс кораблей
             ship_dots.append(Dot(cor_x, cor_y))
 
         return ship_dots
+
     def shooten(self, shot):
         return  shot in self.dots
 
@@ -112,6 +138,3 @@ class Kreiser(Ship): # Класс корабля на две клетки пол
 class Esminec(Ship): # Клас корабля на одну клетку поля
     pass
 
-
-b = Board()
-print(b)
