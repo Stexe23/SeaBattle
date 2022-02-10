@@ -52,10 +52,13 @@ class Board:  # Класс поля
 
     def add_ship(self, ship): # Метод добавления корабля на поле
         for d in ship.dots:
-            if self.out(d) or d in self.busy: # Точка кораюля не выходит за границы и не  занята
+            if self.out(d) or d in self.busy: # Точка корабля не выходит за границы и не  занята
                 raise BoardWrongShipException()
         for d in ship.dots: # Замена точки корабля на символ
             self.fild[d.x][d.y] = "■"
+
+        self.ships.append(ship)
+        self.contour(ship)
 
     def contour(self, ship_cont, tor =False): # Метод обвода контура корабля
         cont = [(-1, -1), (-1, 0), (-1, 1), # Координаты контура
@@ -65,25 +68,24 @@ class Board:  # Класс поля
         for d in ship_cont.dots: # Определяем точки коробля
             for dx, dy in cont: # Провереем координаты вонтура для точки коробля
                 cor = Dot(d.x + dx, d.y + dy) # Смещаем коордитаты точки коробля
-                if not(self.out(cor) and cor not in self.busy): # Точка не выходит за грацъницы и не занята
+                if not(self.out(cor) and cor not in self.busy): # Точка не выходит за грацъницы поля и не занята
                     if tor:
                         self.fild[cor.x][cor.y] = "."
                     self.busy.append(cor)
 
-                self.ships.append(ship_cont)
-                self.contour(ship_cont)
+
 
 
 
 class Ship:  # Родительский класс кораблей
     def __init__(self, n_dot, dlina, position):
-        self.dlina = dlina
-        self.n_dot = n_dot
-        self.position = position
-        self.live = dlina
+        self.dlina = dlina # Длина коробля
+        self.n_dot = n_dot # Начальная точка коробля
+        self.position = position # Положение коробля вертикаль/горизонталь
+        self.live = dlina # Жизнь коробля
 
     @property
-    def dots(self):
+    def dots(self): # Метот возврата точек корабля (свойство)
         ship_dots = []
         for i in range(self.n_dot):
             cor_x = self.dlina.x
@@ -95,9 +97,8 @@ class Ship:  # Родительский класс кораблей
             ship_dots.append(Dot(cor_x, cor_y))
 
         return ship_dots
-
-
-
+    def shooten(self, shot):
+        return  shot in self.dots
 
 
 class Linkor(Ship):  # Класс корабля на четыре клетки поля
