@@ -127,6 +127,48 @@ class Ship:  # Родительский класс кораблей
         return  shot in self.dots
 
 
+class Player: # Основной класс игрока
+    def __init__(self, board, enemy):
+        self.board = board # Доска игрока
+        self.enemy = enemy # Сторона игры
+
+    def ask(self): # Метод который "спрашивает" игрока, в какую клетку он делает выстрел
+       raise NotImplementedError()
+
+    def move(self): # Метод который делает ход в игре
+       while True:
+           try:
+               target = self.ask() # Выбираем цель
+               repeat = self.enemy.shot(target) # Производим выстрел
+               return repeat
+           except BoardException as e:
+               print(e)
+
+class User(Player): # Класс пользователя
+    def ask(self):
+        coord = input("Ваш ход: ".split())
+        while True:
+            if len(coord) != 2:
+                print("Введите две координаты")
+
+            x, y = coord
+
+            if not(x.isdigit()) or not(y.isdigit()):
+                print("Введите числа")
+                continue
+            x, y = int(x), int(y)
+
+            return  (Dot(x-1, y-1))
+
+class AI(Player): # Класс компьютера
+    def ask(self):
+        d = Dot(randint(0, 5), randint(0, 5))
+        print(f'Ход компьютера: {x+1} {y+1}')
+        return  d
+
+
+
+
 class Linkor(Ship):  # Класс корабля на четыре клетки поля
     pass
 
