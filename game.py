@@ -1,7 +1,4 @@
+from pole import Game
 
-
-
-
-
-b = Board()
-print(b)
+g = Game()
+g.start()
