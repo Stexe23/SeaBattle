@@ -83,15 +83,21 @@ class Board:  # Класс поля
             if self.out(d) or d in self.busy: # Точка корабля не выходит за границы и не  занята
                 raise BoardWrongShipException()
         for d in ship.dots: # Замена точки корабля на символ
-            self.fild[d.x][d.y] = "■"
+            if ship.l == 3:
+                self.fild[d.x][d.y] = "Л"
+            elif ship.l == 2:
+                self.fild[d.x][d.y] = "К"
+            else:
+                self.fild[d.x][d.y] = "Э"
 
         self.ships.append(ship)
         self.contour(ship)
 
     def contour(self, ship, tor = False): # Метод обвода контура корабля
-        cont = [(-1, -1), (-1, 0), (-1, 1), # Координаты контура
-                ( 0, -1), ( 0, 0), ( 0, 1),
-                ( 1, -1), ( 1, 0), ( 1, 1)]
+        cont = [(-1, -1), (-1, 0), (-1, 1),
+                (0, -1), (0, 0), (0 , 1),
+                (1, -1), (1, 0), (1, 1)
+                ]
 
         for d in ship.dots: # Определяем точки коробля
             for dx, dy in cont: # Провереем координаты вонтура для точки коробля
@@ -107,6 +113,8 @@ class Board:  # Класс поля
 
         if d in self.busy: # Проверки клетки на повтор
             raise  BoardUsedException()
+
+        self.busy.append(d)
 
         for ship in self.ships: # Проверка из списка кораблей
             if d in ship.dots:
@@ -214,6 +222,11 @@ class Game: # Класс игры
         print(" формат ввода: x y ")
         print(" x - номер строки  ")
         print(" y - номер столбца ")
+        print("=============================")
+        print("Обознацение кораблей на поле:")
+        print("   Л - Линкор   (3 клетки)   ")
+        print("   К - Крейсер  (2 клетки)   ")
+        print("   Э - Эсминец  (1 клетка)   ")
 
     @staticmethod
     def vstack(s1, s2): # Метод вывода полей рядом
@@ -225,7 +238,7 @@ class Game: # Класс игры
             result += f"{line1:{maxlen}}\t\t{line2}\n"
         return result
 
-    def loop(self):
+    def loop(self): #Цикл выполнения игры
         num = 0
         while True:
             user_output = "\t\tДоска пользователя:\n\n" + str(self.us.board)
@@ -255,3 +268,4 @@ class Game: # Класс игры
     def start(self):
         self.greet()
         self.loop()
+# выполнение запуска происходит через game.py
