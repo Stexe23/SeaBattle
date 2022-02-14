@@ -83,12 +83,7 @@ class Board:  # Класс поля
             if self.out(d) or d in self.busy: # Точка корабля не выходит за границы и не  занята
                 raise BoardWrongShipException()
         for d in ship.dots: # Замена точки корабля на символ
-            if ship.l == 3:
-                self.fild[d.x][d.y] = "Л"
-            elif ship.l == 2:
-                self.fild[d.x][d.y] = "К"
-            else:
-                self.fild[d.x][d.y] = "Э"
+            self.fild[d.x][d.y] = "■"
 
         self.ships.append(ship)
         self.contour(ship)
@@ -222,11 +217,7 @@ class Game: # Класс игры
         print(" формат ввода: x y ")
         print(" x - номер строки  ")
         print(" y - номер столбца ")
-        print("=============================")
-        print("Обознацение кораблей на поле:")
-        print("   Л - Линкор   (3 клетки)   ")
-        print("   К - Крейсер  (2 клетки)   ")
-        print("   Э - Эсминец  (1 клетка)   ")
+
 
     @staticmethod
     def vstack(s1, s2): # Метод вывода полей рядом
